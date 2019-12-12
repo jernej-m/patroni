@@ -1,41 +1,34 @@
 #-------------- Install postgre, etcd, patroni --------------------
 echo "Installing PostgreSQL repo..."
-sleep 2
+sleep 5
 yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-echo "-- Installed PosgreSQL repo. --"
 
 echo "Installing postgresql 10 and postgresql10-server..."
-sleep 2
+sleep 5
 yum -y install postgresql10 postgresql10-server
-echo "-- Installed postgresql10 and postgresql10-server. --"
 
 echo "Installing etcd..."
-sleep 2
+sleep 5
 yum -y install etcd
-echo "-- Installed etcd. --"
 
 echo "Installing epel, for python36-psycopg2 needed by Patroni..."
-sleep 2
+sleep 5
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-echo "-- Installed epel. --"
 
 echo "Installing wget..."
-sleep 2
+sleep 5
 yum -y install wget
-echo "-- Installed wget. --"
 
 echo "Downloading Patroni rpm..."
-sleep 2
+sleep 5
 wget https://github.com/cybertec-postgresql/patroni-packaging/releases/download/1.6.0-1/patroni-1.6.0-1.rhel7.x86_64.rpm
-echo "-- Downloaded Patroni rpm. --"
 
 echo "Installing Patroni rpm..."
-sleep 2
+sleep 5
 yum -y install patroni-1.6.0-1.rhel7.x86_64.rpm
-echo "-- Installed Patroni rpm --"
 
 # --------- Edit etcd configuration file ------------
-sleep 2
+sleep 5
 echo "Editing etcd configuration file..."
 
 read -p "member 1 private ip: " v_ip_1
@@ -64,5 +57,3 @@ sed -i "s/#\?ETCD_INITIAL_CLUSTER=\".*\"/ETCD_INITIAL_CLUSTER=\"patroni1=http:\/
 sed -i "s/#\?ETCD_INITIAL_CLUSTER_STATE=\".*\"/ETCD_INITIAL_CLUSTER_STATE=\"new\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_INITIAL_CLUSTER_TOKEN=\".*\"/ETCD_INITIAL_CLUSTER_TOKEN=\"itclustertoken\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http:\/\/$v_this_ip:2379\"/g" /etc/etcd/etcd.conf
-
-echo "-- Edited postgresql configuration file. --"
