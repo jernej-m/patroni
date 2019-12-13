@@ -28,13 +28,13 @@ sleep 5
 yum -y install patroni-1.6.0-1.rhel7.x86_64.rpm
 
 # --------- Edit etcd configuration file ------------
-sleep 5
-echo "Editing etcd configuration file..."
-
 read -p "member 1 private ip: " v_ip_1
 read -p "member 2 private ip: " v_ip_2
 read -p "member 3 private ip: " v_ip_3
 read -p "Enter this member number (1,2,3): " v_member_no
+
+echo "Editing etcd configuration file..."
+sleep 5
 
 if [ $v_member_no == 1 ]
 then
@@ -59,12 +59,13 @@ sed -i "s/#\?ETCD_INITIAL_CLUSTER_TOKEN=\".*\"/ETCD_INITIAL_CLUSTER_TOKEN=\"itcl
 sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http:\/\/$v_this_ip:2379\"/g" /etc/etcd/etcd.conf
 
 # --------- Edit patroni configuration file -----------
-echo "Moving patroni configuration file to /etc/patroni/..."
+echo "Copying patroni configuration file to /etc/patroni/..."
 sleep 5
 mkdir -p /etc/patroni
-mv ~/patroni/patroni_conf.yml /etc/patroni
+cp /home/centos/patroni/patroni_conf.yml /etc/patroni
 
 echo "Editing patroni configuration file..."
+sleep 5
 sudo sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /etc/patroni/patroni_conf.yml
 sudo sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /etc/patroni/patroni_conf.yml
 sudo sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /etc/patroni/patroni_conf.yml
