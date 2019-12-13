@@ -64,8 +64,14 @@ sleep 5
 mkdir -p /etc/patroni
 cp /home/centos/patroni/patroni_conf.yml /etc/patroni
 
+echo "Changing file permissions and ownership..."
+sleep 5
+chmod 700 /etc/patroni
+chmod 600 /etc/patroni/patroni_conf.yml
+chown -R postgres:postgres /etc/patroni /etc/patroni/patroni_conf.yml
+
 echo "Editing patroni configuration file..."
 sleep 5
-sudo sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /etc/patroni/patroni_conf.yml
-sudo sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /etc/patroni/patroni_conf.yml
-sudo sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /etc/patroni/patroni_conf.yml
+sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /etc/patroni/patroni_conf.yml
+sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /etc/patroni/patroni_conf.yml
+sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /etc/patroni/patroni_conf.yml
