@@ -59,19 +59,9 @@ sed -i "s/#\?ETCD_INITIAL_CLUSTER_TOKEN=\".*\"/ETCD_INITIAL_CLUSTER_TOKEN=\"itcl
 sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http:\/\/$v_this_ip:2379\"/g" /etc/etcd/etcd.conf
 
 # --------- Edit patroni configuration file -----------
-echo "Copying patroni configuration file to /etc/patroni/..."
-sleep 5
-mkdir -p /etc/patroni
-cp /home/centos/patroni/patroni_conf.yml /etc/patroni
-
-echo "Changing file permissions and ownership..."
-sleep 5
-chmod 700 /etc/patroni
-chmod 600 /etc/patroni/patroni_conf.yml
-chown -R postgres:postgres /etc/patroni /etc/patroni/patroni_conf.yml
-
 echo "Editing patroni configuration file..."
 sleep 5
-sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /etc/patroni/patroni_conf.yml
-sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /etc/patroni/patroni_conf.yml
-sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /etc/patroni/patroni_conf.yml
+mv /opt/app/patroni/etc/postgresql.yml.sample /opt/app/patroni/etc/postgresql.yml
+sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /opt/app/patroni/etc/postgresql.yml
+sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /opt/app/patroni/etc/postgresql.yml
+sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /opt/app/patroni/etc/postgresql.yml
