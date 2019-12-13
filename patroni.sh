@@ -57,3 +57,14 @@ sed -i "s/#\?ETCD_INITIAL_CLUSTER=\".*\"/ETCD_INITIAL_CLUSTER=\"patroni1=http:\/
 sed -i "s/#\?ETCD_INITIAL_CLUSTER_STATE=\".*\"/ETCD_INITIAL_CLUSTER_STATE=\"new\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_INITIAL_CLUSTER_TOKEN=\".*\"/ETCD_INITIAL_CLUSTER_TOKEN=\"itclustertoken\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http:\/\/$v_this_ip:2379\"/g" /etc/etcd/etcd.conf
+
+# --------- Edit patroni configuration file -----------
+echo "Moving patroni configuration file to /etc/patroni/..."
+sleep 5
+mkdir -p /etc/patroni
+mv ~/patroni/patroni_conf.yml /etc/patroni
+
+echo "Editing patroni configuration file..."
+sudo sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /etc/patroni/patroni_conf.yml
+sudo sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /etc/patroni/patroni_conf.yml
+sudo sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /etc/patroni/patroni_conf.yml
