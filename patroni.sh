@@ -1,3 +1,7 @@
+echo "Updating yum repositories..."
+sleep 5
+yum -y update
+
 #-------------- Install postgre, etcd, patroni --------------------
 echo "Installing PostgreSQL repo..."
 sleep 5
@@ -73,3 +77,14 @@ sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /opt/app/p
 sed -i "s/data_dir:.*/data_dir: \/var\/lib\/pgsql\/10\/data/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/bin_dir:.*/bin_dir: \/usr\/pgsql-10\/bin/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/password:.*/password: iskratel/g" /opt/app/patroni/etc/postgresql.yml
+
+# ---------- Start etcd and patroni service ---------------
+read -p "Start etcd and patroni service (y/n)? it's recommended that services are started simultaneously on all instances." CONT
+if [ "$CONT" = "y" ]; then
+  systemctl enable etcd
+  systemctl start etcd
+  systemctl enable patroni
+  systemctl start patroni
+else
+  echo "Service start aborted.";
+fi
