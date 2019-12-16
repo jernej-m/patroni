@@ -59,6 +59,7 @@ sed -i "s/#\?ETCD_INITIAL_CLUSTER_TOKEN=\".*\"/ETCD_INITIAL_CLUSTER_TOKEN=\"itcl
 sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http:\/\/$v_this_ip:2379\"/g" /etc/etcd/etcd.conf
 
 # --------- Edit patroni configuration file -----------
+# in /usr/lib/systemd/system/patroni.service patroni configuration file is listed as /opt/app/patroni/etc/postgresql.yml
 echo "Editing patroni configuration file..."
 sleep 5
 mv /opt/app/patroni/etc/postgresql.yml.sample /opt/app/patroni/etc/postgresql.yml
