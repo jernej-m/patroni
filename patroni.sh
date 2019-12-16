@@ -67,8 +67,8 @@ sed -i "s/^scope:.*/scope: patroni_cluster/g" /opt/app/patroni/etc/postgresql.ym
 sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/connect_address:.*:8008/connect_address: $v_this_ip:8008/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/host:.*:2379/host: localhost:2379/g" /opt/app/patroni/etc/postgresql.yml
-sed -i "s/host replicatio.*md5/host replication replicator 0.0.0.0/0 md5/g" /opt/app/patroni/etc/postgresql.yml
+sed -i "s/host replication.*md5/host replication replicator 0.0.0.0\/0 md5/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/connect_address:.*:5432/connect_address: $v_this_ip:5432/g" /opt/app/patroni/etc/postgresql.yml
-sed -i "s/data_dir:.*/data_dir: /var/lib/pgsql/10/data/g" /opt/app/patroni/etc/postgresql.yml
-sed -i "s/bin_dir:.*/bin_dir: /usr/pgsql-10/bin/g" /opt/app/patroni/etc/postgresql.yml
+sed -i "s/data_dir:.*/data_dir: \/var\/lib\/pgsql\/10\/data/g" /opt/app/patroni/etc/postgresql.yml
+sed -i "s/bin_dir:.*/bin_dir: \/usr\/pgsql-10\/bin/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/password:.*/password: iskratel/g" /opt/app/patroni/etc/postgresql.yml
