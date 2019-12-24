@@ -7,9 +7,9 @@ echo "Installing PostgreSQL repo..."
 sleep 5
 yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
-echo "Installing postgresql 10 and postgresql10-server..."
+echo "Installing postgresql 10 and postgresql10 libraries..."
 sleep 5
-yum -y install postgresql10 postgresql10-server
+yum -y install postgresql10 postgresql10-client postgresql10-server postgresql10-contrib postgresql10-devel
 
 echo "Installing etcd..."
 sleep 5
