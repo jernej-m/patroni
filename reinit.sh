@@ -1,8 +1,3 @@
-echo "Stopping Patroni and Etcd services..."
-sleep 5
-systemctl kill patroni
-systemctl kill etcd
-
 # --------- Get variables ------------
 read -p "member 1 ip: " v_ip_1
 read -p "member 2 ip: " v_ip_2
@@ -51,6 +46,10 @@ sed -i "s/bin_dir:.*/bin_dir: \/usr\/pgsql-10\/bin/g" /opt/app/patroni/etc/postg
 sed -i "s/password:.*/password: iskratel/g" /opt/app/patroni/etc/postgresql.yml
 
 # ---------- Start etcd and patroni service ---------------
+echo "Enabling etcd and patroni on start..."
+systemctl enable etcd
+systemctl enable patroni
+
 read -p "Start Etcd service (y/n)? it's recommended that Etcd service is started simultaneously on all instances." CONT
 if [ "$CONT" = "y" ]; then
   systemctl start etcd
