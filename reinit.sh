@@ -1,35 +1,7 @@
-echo "Updating yum repositories..."
+echo "Stopping Patroni and Etcd services..."
 sleep 5
-yum -y update
-
-#-------------- Install postgre, etcd, patroni --------------------
-echo "Installing PostgreSQL repo..."
-sleep 5
-yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-
-echo "Installing postgresql 10 and postgresql10 libraries..."
-sleep 5
-yum -y install postgresql10 postgresql10-server postgresql10-contrib postgresql10-devel
-
-echo "Installing etcd..."
-sleep 5
-yum -y install etcd
-
-echo "Installing epel, for python36-psycopg2 needed by Patroni..."
-sleep 5
-yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-
-echo "Installing wget..."
-sleep 5
-yum -y install wget
-
-echo "Downloading Patroni rpm..."
-sleep 5
-wget https://github.com/cybertec-postgresql/patroni-packaging/releases/download/1.6.0-1/patroni-1.6.0-1.rhel7.x86_64.rpm
-
-echo "Installing Patroni rpm..."
-sleep 5
-yum -y install patroni-1.6.0-1.rhel7.x86_64.rpm
+systemctl stop patroni
+systemctl stop etcd
 
 # --------- Get variables ------------
 read -p "member 1 ip: " v_ip_1
@@ -67,7 +39,6 @@ sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http
 # in /usr/lib/systemd/system/patroni.service patroni configuration file is listed as /opt/app/patroni/etc/postgresql.yml
 echo "Editing patroni configuration file..."
 sleep 5
-mv /opt/app/patroni/etc/postgresql.yml.sample /opt/app/patroni/etc/postgresql.yml
 
 sed -i "s/^scope:.*/scope: patroni_cluster/g" /opt/app/patroni/etc/postgresql.yml
 sed -i "s/^name:.*/name: patroni_member_$v_member_no/g" /opt/app/patroni/etc/postgresql.yml
@@ -80,11 +51,6 @@ sed -i "s/bin_dir:.*/bin_dir: \/usr\/pgsql-10\/bin/g" /opt/app/patroni/etc/postg
 sed -i "s/password:.*/password: iskratel/g" /opt/app/patroni/etc/postgresql.yml
 
 # ---------- Start etcd and patroni service ---------------
-echo "Enabling etcd and patroni on start..."
-sleep 2
-systemctl enable etcd
-systemctl enable patroni
-
 read -p "Start Etcd service (y/n)? it's recommended that Etcd service is started simultaneously on all instances." CONT
 if [ "$CONT" = "y" ]; then
   systemctl start etcd
