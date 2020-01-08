@@ -1,7 +1,7 @@
 echo "Stopping Patroni and Etcd services..."
 sleep 5
-systemctl stop patroni
-systemctl stop etcd
+systemctl kill patroni
+systemctl kill etcd
 
 # --------- Get variables ------------
 read -p "member 1 ip: " v_ip_1

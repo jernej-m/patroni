@@ -9,7 +9,7 @@ yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_6
 
 echo "Installing postgresql 10 and postgresql10 libraries..."
 sleep 5
-yum -y install postgresql10 postgresql10-client postgresql10-server postgresql10-contrib postgresql10-devel
+yum -y install postgresql10 postgresql10-server postgresql10-contrib postgresql10-devel
 
 echo "Installing etcd..."
 sleep 5
@@ -31,14 +31,11 @@ echo "Installing Patroni rpm..."
 sleep 5
 yum -y install patroni-1.6.0-1.rhel7.x86_64.rpm
 
-# --------- Edit etcd configuration file ------------
-read -p "member 1 private ip: " v_ip_1
-read -p "member 2 private ip: " v_ip_2
-read -p "member 3 private ip: " v_ip_3
+# --------- Get variables ------------
+read -p "member 1 ip: " v_ip_1
+read -p "member 2 ip: " v_ip_2
+read -p "member 3 ip: " v_ip_3
 read -p "Enter this member number (1,2,3): " v_member_no
-
-echo "Editing etcd configuration file..."
-sleep 5
 
 if [ $v_member_no == 1 ]
 then
@@ -52,6 +49,10 @@ then
 else
    echo "Wrong cluster number provided"
 fi
+
+# --------- Edit etcd configuration file -----------
+echo "Editing etcd configuration file..."
+sleep 5
 
 sed -i "s/#\?ETCD_NAME=\".*\"/ETCD_NAME=\"patroni$v_member_no\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_LISTEN_PEER_URLS=\".*\"/ETCD_LISTEN_PEER_URLS=\"http:\/\/0.0.0.0:2380\"/g" /etc/etcd/etcd.conf
@@ -79,12 +80,21 @@ sed -i "s/bin_dir:.*/bin_dir: \/usr\/pgsql-10\/bin/g" /opt/app/patroni/etc/postg
 sed -i "s/password:.*/password: iskratel/g" /opt/app/patroni/etc/postgresql.yml
 
 # ---------- Start etcd and patroni service ---------------
-read -p "Start etcd and patroni service (y/n)? it's recommended that services are started simultaneously on all instances." CONT
+echo "Enabling etcd and patroni on start..."
+sleep 2
+systemctl enable etcd
+systemctl enable patroni
+
+read -p "Start Etcd service (y/n)? it's recommended that Etcd service is started simultaneously on all instances." CONT
 if [ "$CONT" = "y" ]; then
-  systemctl enable etcd
   systemctl start etcd
-  systemctl enable patroni
+else
+  echo "Etcd service start aborted.";
+fi
+
+read -p "Start Patroni service (y/n)? it's recommended that Patroni service is started simultaneously on all instances." CONT
+if [ "$CONT" = "y" ]; then
   systemctl start patroni
 else
-  echo "Service start aborted.";
+  echo "Patroni service start aborted.";
 fi
