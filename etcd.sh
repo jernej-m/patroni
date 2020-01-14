@@ -2,6 +2,7 @@ echo "Updating yum repositories..."
 sleep 5
 yum -y update
 
+#-------------- Install etcd --------------------
 echo "Installing etcd..."
 sleep 5
 yum -y install etcd
@@ -29,17 +30,17 @@ fi
 echo "Editing etcd configuration file..."
 sleep 5
 
-sed -i "s/#\?ETCD_NAME=\".*\"/ETCD_NAME=\"patroni$v_member_no\"/g" /etc/etcd/etcd.conf
+sed -i "s/#\?ETCD_NAME=\".*\"/ETCD_NAME=\"etcd_$v_member_no\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_LISTEN_PEER_URLS=\".*\"/ETCD_LISTEN_PEER_URLS=\"http:\/\/0.0.0.0:2380\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_LISTEN_CLIENT_URLS=\".*\"/ETCD_LISTEN_CLIENT_URLS=\"http:\/\/0.0.0.0:2379\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_INITIAL_ADVERTISE_PEER_URLS=\".*\"/ETCD_INITIAL_ADVERTISE_PEER_URLS=\"http:\/\/$v_this_ip:2380\"/g" /etc/etcd/etcd.conf
-sed -i "s/#\?ETCD_INITIAL_CLUSTER=\".*\"/ETCD_INITIAL_CLUSTER=\"patroni1=http:\/\/$v_ip_1:2380,patroni2=http:\/\/$v_ip_2:2380,patroni3=http:\/\/$v_ip_3:2380\"/g" /etc/etcd/etcd.conf
+sed -i "s/#\?ETCD_INITIAL_CLUSTER=\".*\"/ETCD_INITIAL_CLUSTER=\"etcd_1=http:\/\/$v_ip_1:2380,etcd_2=http:\/\/$v_ip_2:2380,etcd_3=http:\/\/$v_ip_3:2380\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_INITIAL_CLUSTER_STATE=\".*\"/ETCD_INITIAL_CLUSTER_STATE=\"new\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_INITIAL_CLUSTER_TOKEN=\".*\"/ETCD_INITIAL_CLUSTER_TOKEN=\"itclustertoken\"/g" /etc/etcd/etcd.conf
 sed -i "s/#\?ETCD_ADVERTISE_CLIENT_URLS=\".*\"/ETCD_ADVERTISE_CLIENT_URLS=\"http:\/\/$v_this_ip:2379\"/g" /etc/etcd/etcd.conf
 
-# ---------- Start etcd and patroni service ---------------
-echo "Enabling etcd and on start..."
+# ---------- Start etcd service ---------------
+echo "Enabling etcd on start..."
 sleep 2
 systemctl enable etcd
 
